@@ -66,20 +66,22 @@ class GiveCommand extends VanillaCommand{
 			}
 			if($item->getID() == 0){
 				$sender->sendMessage(TextFormat::RED . "There is no item called " . $args[1] . ".");
-
+				
 				return true;
 			}
 
-			//TODO: overflow
-			$player->getInventory()->addItem(clone $item);
+			if($player->getInventory()->canAddItem($item)){
+				$player->getInventory()->addItem(clone $item);
+				Command::broadcastCommandMessage($sender, "Gave " . $player->getName() . " " . $item->getCount() . " of " . $item->getName() . " (" . $item->getID() . ":" . $item->getDamage() . ")");
+				return true;
+			}else{
+				$sender->sendMessage(TextFormat::RED . "Can't give item to " . $args[0]);
+				return true;
+			}
 		}else{
 			$sender->sendMessage(TextFormat::RED . "Can't find player " . $args[0]);
 
 			return true;
 		}
-
-		Command::broadcastCommandMessage($sender, "Gave " . $player->getName() . " " . $item->getCount() . " of " . $item->getName() . " (" . $item->getID() . ":" . $item->getDamage() . ")");
-
-		return true;
 	}
 }
